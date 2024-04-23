@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代辦事項</title>
+    <link rel="stylesheet" href="item.css">
+</head>
+<body>
+
+<div class="container">
+    <label for="inputField">請輸入資料：</label>
+    <br>
+    <input type="text" id="inputField" placeholder="例如：買早餐">
+    <button type="button" onclick="submitData()">提交</button>
+    <ul id="dataList"></ul>
+    <button type="button" onclick="clearAll()" id="clearButton" style="display: none;">清除所有資料</button>
+</div>
+
+<script>
+    function submitData() {
+        var inputData = document.getElementById("inputField").value;
+        var dataList = document.getElementById("dataList");
+
+        var li = document.createElement("li");
+        li.textContent = inputData;
+        li.dataset.value = inputData;
+
+        document.querySelector('button[type="button"]').textContent = "提交";
+
+        // 呼叫編輯和刪除按鈕函式
+        edit(li);
+        remove(li);
+
+        // 尋找列表中第一個大於新資料的元素，將新資料插入在它之前
+        var nextItem = null;
+        var listItems = dataList.getElementsByTagName("li");
+        for (var i = 0; i < listItems.length; i++) {
+            if (listItems[i].textContent > inputData) {
+                nextItem = listItems[i];
+                break;
+            }
+        }
+
+        if (nextItem !== null) {
+            dataList.insertBefore(li, nextItem);
+        } else {
+            dataList.appendChild(li); // 如果沒有大於新資料的元素，則附加到列表末尾
+        }
+
+        // 清空輸入框
+        document.getElementById("inputField").value = "";
+
+        // 顯示清除按鈕
+        document.getElementById("clearButton").style.display = "inline-block";
+    }
+
+
+    function clearAll() {
+        var dataList = document.getElementById("dataList");
+        dataList.innerHTML = ""; // 清空列表
+
+        // 隱藏清除按鈕
+        document.getElementById("clearButton").style.display = "none";
+    }
+
+    // 建立編輯按鈕
+    function edit(li) {
+        var greenButton = document.createElement("button");
+        greenButton.textContent = "更改";
+        greenButton.style.backgroundColor = "green";
+        greenButton.onclick = function() {
+            // 將輸入欄位的文字更改為相應的資料
+            document.getElementById("inputField").value = li.dataset.value;
+            // 將提交按鈕的文字更改為 "更改"
+            document.querySelector('button[type="button"]').textContent = "更改";
+
+            // 刪除該筆資料所在的 <li> 元素
+            li.remove();
+        };
+        li.appendChild(greenButton);
+    }
+
+    // 建立刪除按鈕
+    function remove(li) {
+        var redButton = document.createElement("button");
+        redButton.textContent = "刪除";
+        redButton.style.backgroundColor = "red";
+        redButton.onclick = function() {
+            // 刪除該筆資料所在的 <li> 元素
+            li.remove();
+        };
+        li.appendChild(redButton);
+    }
+</script>
+
+</body>
+</html>
